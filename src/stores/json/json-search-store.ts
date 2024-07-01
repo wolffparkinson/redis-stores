@@ -1,7 +1,7 @@
-import type { transformArguments as createCommandArgs } from '@redis/search/dist/commands/CREATE';
-import { RediSearchSchema, SchemaFieldTypes, SearchOptions } from 'redis';
-import { Mapped } from '../../utils';
-import { RedisClient } from '../../interfaces';
+import type { transformArguments as createCommandArgs } from "@redis/search/dist/commands/CREATE";
+import { RediSearchSchema, SchemaFieldTypes, SearchOptions } from "redis";
+import { Mapped } from "../../utils";
+import { RedisClient } from "../../interfaces";
 
 type CreateIndexOptions = Parameters<typeof createCommandArgs>[2];
 export type JsonSearchSchema = Record<
@@ -45,7 +45,7 @@ export class JsonSearchStore<Doc, Schema extends JsonSearchSchema> {
     );
 
     this.createOptions = {
-      ON: 'JSON',
+      ON: "JSON",
       PREFIX: options.prefix
         ? Array.isArray(options.prefix)
           ? options.prefix
@@ -71,7 +71,7 @@ export class JsonSearchStore<Doc, Schema extends JsonSearchSchema> {
 
     const schema = new Map(Object.entries(this.schema));
     const attributes = new Map(
-      Object.values(rawInfo.attributes).map((a) => [a['identifier'], a])
+      Object.values(rawInfo.attributes).map((a) => [a["identifier"], a])
     );
     const definition = new Map(Object.entries(rawInfo.indexDefinition));
 
@@ -112,16 +112,16 @@ export class JsonSearchStore<Doc, Schema extends JsonSearchSchema> {
     const q = [];
     for (const key in where) {
       switch (key) {
-        case 'AND':
+        case "AND":
           q.push(
-            `(${where[key].map((q: any) => this.buildQuery(q)).join(' ')})`
+            `(${where[key].map((q: any) => this.buildQuery(q)).join(" ")})`
           );
           break;
-        case 'OR':
+        case "OR":
           if (!where[key].length)
-            throw new Error('More than one condition required for OR');
+            throw new Error("More than one condition required for OR");
           q.push(
-            `(${where[key].map((q: any) => this.buildQuery(q)).join(' | ')})`
+            `(${where[key].map((q: any) => this.buildQuery(q)).join(" | ")})`
           );
           break;
         default:
@@ -140,28 +140,28 @@ export class JsonSearchStore<Doc, Schema extends JsonSearchSchema> {
       }
     }
 
-    return q.join(' ');
+    return q.join(" ");
   }
 
   // TODO: Use INFIELDS paramerter in Redis search
   async query(options: QueryOptions<Doc, Schema>): Promise<Doc[]> {
     function addWildcard(text: string) {
       if (options.wildcard === false) return text.trim();
-      return `*${text.trim().replace(/ /gm, '*')}*`;
+      return `*${text.trim().replace(/ /gm, "*")}*`;
     }
 
     const AND = [];
     if (options.where) AND.push(this.buildQuery(options.where));
 
     if (options.search) {
-      if (typeof options.search === 'string') {
+      if (typeof options.search === "string") {
         AND.push(`(${addWildcard(options.search)})`);
       } else if (Array.isArray(options.search)) {
         const search = options.search[0];
         AND.push(
           `(${options.search[1]
             .map((k) => `(@${String(k)}:${addWildcard(search)})`)
-            .join(' | ')})`
+            .join(" | ")})`
         );
       } else {
         throw new Error(`Unsupported search type: ${typeof options.search}`);
@@ -169,7 +169,7 @@ export class JsonSearchStore<Doc, Schema extends JsonSearchSchema> {
     }
 
     if (!AND.length) return [];
-    const query = AND.join(' ');
+    const query = AND.join(" ");
     this.logger?.debug({ query });
 
     const { documents } = await this.rawQuery(query, {
@@ -182,24 +182,24 @@ export class JsonSearchStore<Doc, Schema extends JsonSearchSchema> {
 
 const attrMappings = [
   {
-    key: 'type',
-    infoKey: 'type',
+    key: "type",
+    infoKey: "type",
   },
   {
-    key: 'AS',
-    infoKey: 'attribute',
+    key: "AS",
+    infoKey: "attribute",
   },
 ];
 
 const defMappings = [
   {
-    key: 'ON',
-    infoKey: 'key_type',
+    key: "ON",
+    infoKey: "key_type",
     compare: (value: any, defValue: any) => value === defValue,
   },
   {
-    key: 'PREFIX',
-    infoKey: 'prefixes',
+    key: "PREFIX",
+    infoKey: "prefixes",
     compare: (value: any, defValue: any) => {
       value = Array.isArray(value) ? value : [value];
       return (

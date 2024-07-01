@@ -1,6 +1,6 @@
-import { SetOptions } from 'redis';
-import { RedisSet } from '../../redis-set';
-import { BaseStore } from '../base-store';
+import { SetOptions } from "redis";
+import { RedisSet } from "../../redis-set";
+import { BaseStore } from "../base-store";
 
 export type StringParser<T = string> = {
   serialize: (value: T) => string;
@@ -29,7 +29,7 @@ export abstract class BaseStringStore<
    */
   async set(id: ID, value: T, options?: SetOptions): Promise<string | null> {
     const setOptions: SetOptions = options || {};
-    if (this.ttl) setOptions['EX'] = this.ttl;
+    if (this.ttl) setOptions["EX"] = this.ttl;
 
     return this.redis.set(
       this.toKey(id),
@@ -135,13 +135,13 @@ export abstract class BaseStringStore<
    *
    * @see {@link https://redis.io/commands/mSet}
    */
-  async mSet(kvs: [ID, T][]): Promise<'OK'> {
+  async mSet(kvs: [ID, T][]): Promise<"OK"> {
     const mapped: [string, string][] = kvs.map(([k, v]) => [
       this.toKey(k),
       this.valueParser.serialize(v),
     ]);
     const ret = await this.redis.mSet(mapped);
-    return ret as 'OK';
+    return ret as "OK";
   }
 
   /**

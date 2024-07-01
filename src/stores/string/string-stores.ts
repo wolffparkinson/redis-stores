@@ -1,10 +1,10 @@
-import { BaseStringStore } from './base-string.store';
+import { BaseStringStore } from "./base-string.store";
 import {
   booleanParser,
   numberParser,
   objectParser,
   stringParser,
-} from './string-parsers';
+} from "./string-parsers";
 
 export class StringStore<ID = string> extends BaseStringStore<string, ID> {
   valueParser = stringParser;

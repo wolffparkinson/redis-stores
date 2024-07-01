@@ -2,7 +2,7 @@ import {
   DEFAULT_KEYGEN,
   type RedisClient,
   type RedisKeygen,
-} from './interfaces';
+} from "./interfaces";
 
 export interface RedisSetOptions<ID = string> {
   redis: RedisClient;

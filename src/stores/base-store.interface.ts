@@ -1,4 +1,4 @@
-import { RedisKeygen } from '../interfaces';
+import { RedisKeygen } from "../interfaces";
 
 type RedisStoreBaseOptions = {
   separator?: string;

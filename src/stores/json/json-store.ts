@@ -1,5 +1,5 @@
-import { removeNulls } from '../../utils';
-import { BaseStore } from '../base-store';
+import { removeNulls } from "../../utils";
+import { BaseStore } from "../base-store";
 
 type KeyValueResolvable<T, ID = string> =
   | [ID, T][]
@@ -46,7 +46,7 @@ export class JsonStore<
    */
   async mGet(...ids: ID[]): Promise<Array<T | null>> {
     if (!ids.length) return [];
-    return this.redis.json.mGet(this.toKeys(...ids), '.') as any;
+    return this.redis.json.mGet(this.toKeys(...ids), ".") as any;
   }
 
   /**
@@ -92,19 +92,19 @@ export class JsonStore<
   }
 
   async set(id: ID, value: T): Promise<string | null> {
-    return this.redis.json.set(this.toKey(id), '$', value as any);
+    return this.redis.json.set(this.toKey(id), "$", value as any);
   }
 
-  async mSet(data: KeyValueResolvable<T, ID>): Promise<'OK'> {
+  async mSet(data: KeyValueResolvable<T, ID>): Promise<"OK"> {
     const kvs = this.toKeyValues(data);
     const ret = await this.redis.json.mSet(
       kvs.map(([k, v]) => ({
-        path: '$',
+        path: "$",
         key: this.toKey(k),
         value: v as any,
       }))
     );
-    return ret as 'OK';
+    return ret as "OK";
   }
 
   /**

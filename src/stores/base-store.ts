@@ -1,5 +1,5 @@
-import { DEFAULT_KEYGEN, RedisClient, RedisKeygen } from '../interfaces';
-import { RedisStoreOptions } from './base-store.interface';
+import { DEFAULT_KEYGEN, RedisClient, RedisKeygen } from "../interfaces";
+import { RedisStoreOptions } from "./base-store.interface";
 
 export interface RedisClientOption {
   client: RedisClient;
@@ -18,7 +18,7 @@ export class BaseStore<ID = string> {
 
   constructor(options: RedisStoreOptions<ID> & RedisClientOption) {
     this.redis = options.client;
-    this.SEPARATOR = options.separator || ':';
+    this.SEPARATOR = options.separator || ":";
     this.NAMESPACE = options.prefix;
     this.PREFIX = `${options.prefix}${this.SEPARATOR}`;
     this.ttl = options.ttl;
@@ -137,7 +137,7 @@ export class BaseStore<ID = string> {
    * @see {@link https://redis.io/commands/keys}
    */
   async getAllKeys(): Promise<string[]> {
-    return this.keys('*');
+    return this.keys("*");
   }
 
   /**
@@ -148,7 +148,7 @@ export class BaseStore<ID = string> {
    * @see {@link https://redis.io/commands/keys}
    */
   async getAllIds(): Promise<ID[]> {
-    const keys = await this.keys('*');
+    const keys = await this.keys("*");
     return this.toIds(...keys);
   }
 
