@@ -1,9 +1,10 @@
 {
   "name": "redis-stores",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A collection of Redis stores",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": "https://github.com/wolffparkinson/redis-stores",
   "files": [
     "dist",
     "README.md"
