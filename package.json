@@ -1,14 +1,14 @@
 {
   "name": "redis-stores",
   "version": "0.0.1",
-  "description": "",
+  "description": "A collection of Redis stores",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "peerDependencies": {
     "@redis/search": "^1.1.6",
     "redis": "^4.6.14"
