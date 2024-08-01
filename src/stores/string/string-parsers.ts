@@ -1,3 +1,4 @@
+import { recursiveParse, recursiveSerialize } from "../../utils";
 import { StringParser } from "./base-string.store";
 
 export const stringParser: StringParser<string> = {
@@ -34,35 +35,10 @@ export const booleanParser: StringParser<boolean> = {
 export function objectParser<T>(): StringParser<T> {
   return {
     deserialize(value: string): T {
-      if (value === "REDIS_UNDEFINED") return undefined as T;
-      return JSON.parse(value, (key, value) => {
-        if (typeof value === "string" && value.startsWith("REDIS_DATE:")) {
-          return new Date(value.slice("REDIS_DATE:".length));
-        }
-        return value;
-      });
+      return recursiveParse(JSON.parse(value));
     },
     serialize(value: T): string {
-      if (typeof value === "undefined") return "REDIS_UNDEFINED";
-      return JSON.stringify(recursiveReplace(value));
+      return JSON.stringify(recursiveSerialize(value));
     },
   };
-}
-
-function recursiveReplace(value: any): any {
-  if (value instanceof Date) {
-    // Convert Date object to a string
-    return `REDIS_DATE:${value.toISOString()}`;
-  } else if (Array.isArray(value)) {
-    // Recursively replace array elements
-    return value.map(recursiveReplace);
-  } else if (value !== null && typeof value === "object") {
-    // Recursively replace properties of objects
-    return Object.fromEntries(
-      Object.entries(value).map(([k, v]) => [k, recursiveReplace(v)])
-    );
-  } else {
-    // Return the value if it's not an object or a Date
-    return value;
-  }
 }

@@ -1,4 +1,4 @@
-import { removeNulls } from "../../utils";
+import { recursiveParse, recursiveSerialize, removeNulls } from "../../utils";
 import { BaseStore } from "../base-store";
 
 type KeyValueResolvable<T, ID = string> =
@@ -10,6 +10,14 @@ export class JsonStore<
   T extends object = object,
   ID = string
 > extends BaseStore<ID> {
+  private serializeValue(value: T) {
+    return recursiveSerialize(value);
+  }
+
+  private parseValue(value: any): T {
+    return recursiveParse(value);
+  }
+
   /**
    * Retrieves a JSON object
    *
@@ -18,7 +26,7 @@ export class JsonStore<
    */
   async get(id: ID): Promise<T | null> {
     const value = await this.redis.json.get(this.toKey(id));
-    return value as T | null;
+    return this.parseValue(value);
   }
 
   /**
@@ -46,7 +54,8 @@ export class JsonStore<
    */
   async mGet(...ids: ID[]): Promise<Array<T | null>> {
     if (!ids.length) return [];
-    return this.redis.json.mGet(this.toKeys(...ids), ".") as any;
+    const values = await this.redis.json.mGet(this.toKeys(...ids), ".");
+    return values.map((v) => this.parseValue(v));
   }
 
   /**
@@ -92,7 +101,7 @@ export class JsonStore<
   }
 
   async set(id: ID, value: T): Promise<string | null> {
-    return this.redis.json.set(this.toKey(id), "$", value as any);
+    return this.redis.json.set(this.toKey(id), "$", this.serializeValue(value));
   }
 
   async mSet(data: KeyValueResolvable<T, ID>): Promise<"OK"> {
@@ -101,7 +110,7 @@ export class JsonStore<
       kvs.map(([k, v]) => ({
         path: "$",
         key: this.toKey(k),
-        value: v as any,
+        value: this.serializeValue(v),
       }))
     );
     return ret as "OK";
